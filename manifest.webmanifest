@@ -1,0 +1,9 @@
+{
+  "name": "ConectaEdu PR",
+  "short_name": "ConectaEdu",
+  "lang": "pt-BR",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "theme_color": "#0ea5e9",
+  "background_color": "#f5f7fa"
+}

@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ConectaEdu PR — Plataforma Escolar</title>
+<link rel="icon" type="image/png" href="assets/connectedu-logo.png">
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<!-- ACESSO: protótipo local, sem autenticação real -->
+<div class="login-overlay" id="loginOverlay" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+  <div class="login-card">
+    <div class="login-brand"><img src="assets/connectedu-logo.png" alt="ConectaEdu PR"></div>
+    <p class="login-kicker">SUA JORNADA DE APRENDIZAGEM</p>
+    <h1 id="loginTitle">Que bom ter você aqui!</h1>
+    <p class="login-copy">Entre na sua área escolar para acompanhar atividades, conquistas e sua evolução.</p>
+    <form id="loginForm" class="login-form">
+      <label for="loginName">Nome do estudante</label>
+      <input id="loginName" name="name" autocomplete="name" placeholder="Nome para exibição (opcional)" maxlength="60">
+      <label for="loginRole">Entrar como</label>
+      <select id="loginRole" name="role" required>
+        <option value="aluno">Aluno(a)</option>
+        <option value="professor">Professor(a)</option>
+        <option value="pedagogo">Pedagogo(a) / equipe pedagógica</option>
+        <option value="responsavel">Responsável</option>
+        <option value="admin">Administrador</option>
+      </select>
+      <label for="loginUser">Usuário (demonstração)</label>
+      <input id="loginUser" name="username" autocomplete="username" placeholder="Ex.: aluno.demo" required>
+      <label for="loginPassword">Senha</label>
+      <input id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="Use demo123 para a demonstração" required>
+      <button type="submit" class="login-submit">Entrar na plataforma <span>→</span></button>
+      <div class="demo-accounts">
+        <strong>Contas de demonstração</strong>
+        <span>Aluno: <code>aluno.demo</code></span>
+        <span>Professor: <code>prof.demo</code></span>
+        <span>Pedagogo: <code>pedagogo.demo</code></span>
+        <span>Administrador: <code>admin.demo</code></span>
+        <span>Responsável: <code>familia.demo</code></span>
+        <span>Administrador: <code>admin.demo</code></span>
+        <small>Senha de demonstração: <code>demo123</code></small>
+      </div>
+    </form>
+    <div class="login-divider"><span>ou</span></div>
+    <button class="demo-entry" type="button" onclick="enterDemo()"> Entrar sem login — Demonstração</button>
+    <p class="login-footnote">Ambiente demonstrativo. As contas e permissões são simuladas neste navegador; não use dados reais de estudantes.</p>
+  </div>
+</div>
+
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar" id="sidebar">
+
+    <div class="logo"><img src="assets/connectedu-logo.png" alt="ConectaEdu PR"></div>
+
+    <ul class="menu" aria-label="Navegação principal">
+        <li><button class="active" onclick="showPage('inicio',this)"><span class="menu-icon"><svg class="visual-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span> Início</button></li>
+        <li class="menu-group-label">ÁREAS PRINCIPAIS</li>
+        <li><button onclick="showPage('hub-escola',this)"><span class="menu-icon"><svg class="visual-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m3 9 9-5 9 5-9 5z"/><path d="M5 11v5c2.5 2.5 9.5 2.5 12 0v-5M21 9v7"/></svg></span> Minha escola</button></li>
+        <li><button onclick="showPage('hub-treinar',this)"><span class="menu-icon"><svg class="visual-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 4.5A2.5 2.5 0 0 1 5.5 2H12v18H5.5A2.5 2.5 0 0 0 3 22zM21 4.5A2.5 2.5 0 0 0 18.5 2H12v18h6.5a2.5 2.5 0 0 1 2.5 2z"/></svg></span> Treinar</button></li>
+        <li><button onclick="showPage('hub-score',this)"><span class="menu-icon"><svg class="visual-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5"/><path d="M8 5.5v5M6.5 7h3M13 11a5 5 0 1 0 2-3.9M13 16h8M17 12v8"/></svg></span> Score</button></li>
+        <li><button onclick="showPage('hub-desempenho',this)"><span class="menu-icon"><svg class="visual-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 19V5M4 19h17"/><path d="m7 15 4-4 3 2 5-6"/><circle cx="19" cy="7" r="1"/></svg></span> Desempenho</button></li>
+        <li class="menu-group-label">PREFERÊNCIAS</li>
+        <li><button onclick="showPage('notificacoes',this)"><span class="menu-icon"><svg class="visual-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg></span> Notificações <span id="navNotificationCount" class="nav-count">3</span></button></li>
+        <li><button onclick="showPage('acessibilidade',this)"><span class="menu-icon"><svg class="visual-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="7" r="1.2"/><path d="M6.5 10h11M12 10v9M12 13l-4 5M12 13l4 5"/></svg></span> Acessibilidade</button></li>
+        <li><button onclick="showPage('perfil',this)"><span class="menu-icon"><svg class="visual-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span> Meu perfil</button></li>
+        <li class="menu-group-label">ÁREAS POR PERFIL</li>
+        <li class="role-only role-professor role-pedagogo"><button type="button" onclick="openClassChat(this)"><span class="menu-icon"><svg class="visual-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 9 9 0 0 1-4-.9L3 21l1.9-5.5a9 9 0 0 1-.9-4A8.5 8.5 0 0 1 12.5 3H13a8.5 8.5 0 0 1 8 8z"/><path d="M8 12h.01M12 12h.01M16 12h.01"/></svg></span> Chat por turma</button></li>
+        <li class="role-only role-professor"><button onclick="showPage('docente',this)"><span class="menu-icon"><svg class="visual-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M8 10h8M8 14h8M8 18h5"/></svg></span> Área do professor</button></li>
+        <li class="role-only role-pedagogo"><button onclick="showPage('pedagogico',this)"><span class="menu-icon"><svg class="visual-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM20 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Visão pedagógica</button></li>
+        <li class="role-only role-responsavel"><button onclick="showPage('familia',this)"><span class="menu-icon"><svg class="visual-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0M16 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 5"/></svg></span> Área da família</button></li>
+        <li class="role-only role-admin"><button onclick="showPage('administracao',this)"><span class="menu-icon"><svg class="visual-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.6a8 8 0 0 1-1.5.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.5-.9l-1.7.6-1.4-2.4 1.4-1.1a7 7 0 0 1 0-1.8l-1.4-1.1 1.4-2.4 1.7.6a8 8 0 0 1 1.5-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.5.9l1.7-.6 1.4 2.4-1.4 1.1a7 7 0 0 1 0 1.8z"/></svg></span> Administração</button></li>
+    </ul>
+</aside>
+
+
+<!-- MAIN -->
+
+<div class="main">
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+        <button class="icon-button mobile-menu" onclick="toggleMenu()" aria-label="Abrir menu"><svg class="visual-icon" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+
+        <div class="search">
+            <svg class="visual-icon search-icon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Pesquisar..."
+                onkeyup="globalSearch()"
+            >
+        </div>
+
+        <div class="top-actions">
+
+            <button
+                class="icon-button"
+                onclick="toggleDarkMode()"
+                title="Modo escuro"
+                aria-label="Alternar modo escuro"
+            ><svg class="visual-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5 8.5 8.5 0 1 0 20.5 14.5Z"/></svg></button>
+
+            <button
+                class="icon-button"
+                onclick="showPage('notificacoes')"
+                aria-label="Abrir notificações"
+            >
+                
+                <svg class="visual-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="notification-dot"></span>
+            </button>
+
+            <button class="coin-pill" type="button" onclick="showPage('pet')" title="Abrir Meu Pet"> <strong id="coinBalance">0</strong> moedas</button>
+
+            <div class="user">
+
+                <div class="user-info">
+                    <strong id="topName">João Silva</strong>
+                    <small id="topRole">Aluno(a) • 8º Ano • Turma A</small>
+                </div>
+
+                <div class="avatar">
+                    JS
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <main class="content">
+
+
+        <!-- ================= INÍCIO ================= -->
+
+        <section id="hub-escola" class="page hub-page">
+          <div class="page-heading"><div><span class="eyebrow">ROTINA E COMUNIDADE ESCOLAR</span><h1> Minha escola</h1><p>Tudo o que conecta você à sua turma, aos professores e à rotina escolar.</p></div></div>
+          <div class="hub-grid">
+            <button class="hub-card" onclick="showPage('atividades')"><span class="hub-card-icon"><svg class="visual-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M8 10h8M8 14h8M8 18h5"/></svg></span><strong>Atividades escolares</strong><small>Consulte tarefas, prazos e entregas.</small></button>
+            <button class="hub-card" onclick="showPage('calendario')"><span class="hub-card-icon"><svg class="visual-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M8 14h2M14 14h2M8 17h2"/></svg></span><strong>Calendário escolar</strong><small>Provas, eventos e compromissos.</small></button>
+            <button class="hub-card" onclick="showPage('plataformas')"><span class="hub-card-icon"><svg class="visual-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg></span><strong>Plataformas da rede</strong><small>Acesse recursos educacionais.</small></button>
+            <button class="hub-card" onclick="showPage('escola')"><span class="hub-card-icon"><svg class="visual-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m3 9 9-5 9 5-9 5z"/><path d="M5 11v5c2.5 2.5 9.5 2.5 12 0v-5M21 9v7"/></svg></span><strong>Informações da escola</strong><small>Orientações e comunicados.</small></button>
+            <button class="hub-card" onclick="showPage('notificacoes')"><span class="hub-card-icon"><svg class="visual-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg></span><strong>Comunicados</strong><small>Acompanhe os avisos recentes.</small></button>
+            <button class="hub-card role-only role-professor" onclick="showPage('docente')"><span class="hub-card-icon"><svg class="visual-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m2 10 10-6 10 6-10 6zM6 13v5c4 3 8 3 12 0v-5M22 10v6"/></svg></span><strong>Área do professor</strong><small>Organize atividades e turmas.</small></button>
+            <button class="hub-card role-only role-pedagogo" onclick="showPage('pedagogico')"><span class="hub-card-icon"><svg class="visual-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM20 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><strong>Acompanhamento pedagógico</strong><small>Registre ações e retornos.</small></button>
+            <button class="hub-card role-only role-responsavel" onclick="showPage('familia')"><span class="hub-card-icon"><svg class="visual-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0M16 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 5"/></svg></span><strong>Área da família</strong><small>Acompanhe a rotina do estudante.</small></button>
+          </div>
+        </section>
+        <section id="hub-treinar" class="page hub-page">
+          <div class="page-heading"><div><span class="eyebrow">APRENDIZAGEM AUTÔNOMA</span><h1> Treinar</h1><p>Pratique no seu ritmo com atividades, conteúdos e apoio para aprender.</p></div></div>
+          <div class="hub-grid">
+            <button class="hub-card" onclick="showPage('banco')"><span class="hub-card-icon"><svg class="visual-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M8 10h8M8 14h8M8 18h5"/></svg></span><strong>Banco de atividades</strong><small>Pratique e teste seus conhecimentos.</small></button>
+            <button class="hub-card" onclick="showPage('disciplinas')"><span class="hub-card-icon"><svg class="visual-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 4.5A2.5 2.5 0 0 1 5.5 2H12v18H5.5A2.5 2.5 0 0 0 3 22zM21 4.5A2.5 2.5 0 0 0 18.5 2H12v18h6.5a2.5 2.5 0 0 1 2.5 2z"/></svg></span><strong>Disciplinas</strong><small>Explore conteúdos por matéria.</small></button>
+            <button class="hub-card" onclick="showPage('habilidades')"><span class="hub-card-icon"><svg class="visual-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 19V5M4 19h17"/><path d="m7 15 4-4 3 2 5-6"/><circle cx="19" cy="7" r="1"/></svg></span><strong>Habilidades e etapas</strong><small>Veja habilidades e objetivos de aprendizagem.</small></button>
+            <button class="hub-card" onclick="showPage('biblioteca')"><span class="hub-card-icon"><svg class="visual-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 1 4 17.5z"/><path d="M4 16.5A2.5 2.5 0 0 1 6.5 14H20M8 7h7M8 10h5"/></svg></span><strong>Biblioteca digital</strong><small>Textos, guias e materiais de estudo.</small></button>
+            <button class="hub-card" onclick="showPage('ia')"><span class="hub-card-icon"><svg class="visual-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 9 9 0 0 1-4-.9L3 21l1.9-5.5a9 9 0 0 1-.9-4A8.5 8.5 0 0 1 12.5 3H13a8.5 8.5 0 0 1 8 8z"/><path d="M8 12h.01M12 12h.01M16 12h.01"/></svg></span><strong>Chatbot de estudos</strong><small>Peça explicações e dicas de estudo.</small></button>
+            <button class="hub-card" onclick="showPage('acessibilidade')"><span class="hub-card-icon"><svg class="visual-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="7" r="1.2"/><path d="M6.5 10h11M12 10v9M12 13l-4 5M12 13l4 5"/></svg></span><strong>Estudar com acessibilidade</strong><small>Ajuste a experiência ao seu jeito de aprender.</small></button>
+          </div>
+        </section>
+        <section id="hub-score" class="page hub-page">
+          <div class="page-heading"><div><span class="eyebrow">RECOMPENSAS EDUCATIVAS</span><h1> Score</h1><p>Veja suas moedas, cuide do pet e acompanhe suas conquistas.</p></div></div>
+          <div class="stats-grid"><div class="stat-card"><span>Moedas disponíveis</span><strong id="scoreCoins">0</strong><small>Conquistadas com atividades</small></div><div class="stat-card"><span>Nível do pet</span><strong id="scorePetLevel">1</strong><small>Evolui com experiência</small></div><div class="stat-card"><span>Atividades concluídas</span><strong id="scoreCompleted">0</strong><small>Seu esforço de estudo</small></div></div>
+          <div class="hub-grid">
+            <button class="hub-card" onclick="showPage('pet')"><span class="hub-card-icon"><svg class="visual-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8z"/></svg></span><strong>Meu pet e loja</strong><small>Cuide, evolua e personalize seu companheiro.</small></button>
+            <button class="hub-card" onclick="showPage('conquistas')"><span class="hub-card-icon"><svg class="visual-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="5"/><path d="m8.5 12-1 9 4.5-2.5 4.5 2.5-1-9"/></svg></span><strong>Conquistas</strong><small>Desbloqueie marcos de aprendizagem.</small></button>
+            <button class="hub-card" onclick="showPage('hub-desempenho')"><span class="hub-card-icon"><svg class="visual-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 19V5M4 19h17"/><path d="m7 15 4-4 3 2 5-6"/><circle cx="19" cy="7" r="1"/></svg></span><strong>Meu desempenho</strong><small>Veja como seu esforço está evoluindo.</small></button>
+          </div>
+        </section>
+        <section id="hub-desempenho" class="page hub-page">
+          <div class="page-heading"><div><span class="eyebrow">PROGRESSO E MOTIVAÇÃO</span><h1> Desempenho</h1><p>Acompanhe sua evolução e compare indicadores de forma saudável com a turma.</p></div></div>
+          <div class="stats-grid"><div class="stat-card"><span>Atividades concluídas</span><strong id="performanceCompleted">0</strong><small>Registros locais</small></div><div class="stat-card"><span>Moedas</span><strong id="performanceCoins">0</strong><small>Recompensas de estudo</small></div><div class="stat-card"><span>Pet</span><strong id="performancePet">Nível 1</strong><small>Evolução do companheiro</small></div></div>
+          <div class="hub-grid">
+            <button class="hub-card" onclick="showPage('progresso')"><span class="hub-card-icon"><svg class="visual-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 19V5M4 19h17"/><path d="m7 15 4-4 3 2 5-6"/><circle cx="19" cy="7" r="1"/></svg></span><strong>Meu progresso</strong><small>Veja seus resultados por disciplina.</small></button>
+            <button class="hub-card" onclick="showPage('ranking')"><span class="hub-card-icon"><svg class="visual-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0M16 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 5"/></svg></span><strong>Ranking da turma</strong><small>Pontos e evolução dos pets.</small></button>
+            <button class="hub-card" onclick="showPage('conquistas')"><span class="hub-card-icon"><svg class="visual-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="5"/><path d="m8.5 12-1 9 4.5-2.5 4.5 2.5-1-9"/></svg></span><strong>Conquistas</strong><small>Veja o que já desbloqueou.</small></button>
+          </div>
+        </section>
+        <section id="ranking" class="page">
+          <div class="page-heading"><div><span class="eyebrow">TURMA · DEMONSTRAÇÃO</span><h1> Ranking da turma</h1><p>Classificação por moedas e nível do pet. Os colegas são fictícios nesta versão demonstrativa; não representa dados reais de estudantes.</p></div><button class="btn btn-secondary" onclick="renderClassRanking()">Atualizar ranking</button></div>
+          <div class="notice-card"><strong>Competição saudável</strong><p>Use o ranking como incentivo, não como medida de valor pessoal. O ideal é celebrar metas pessoais, colaboração e progresso individual.</p></div>
+          <div class="toolbar-grid"><label>Ordenar por<select id="rankingSort" onchange="renderClassRanking()"><option value="coins">Mais moedas</option><option value="pet">Pet mais completo</option></select></label></div>
+          <div id="classRankingList" class="ranking-list" aria-live="polite"></div>
+        </section>
+
+        <section id="inicio" class="page active">
+
+            <div class="welcome">
+
+                <div>
+
+                    <h1>Olá, João! </h1>
+
+                    <p>
+                        Aqui está tudo o que você precisa para sua vida escolar.
+                    </p>
+
+                </div>
+
+                <div class="welcome-icon"><svg class="visual-icon" width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m3 9 9-5 9 5-9 5z"/><path d="M5 11v5c2.5 2.5 9.5 2.5 12 0v-5M21 9v7"/></svg><span class="welcome-orbit"></span></div>
+
+            </div>
+
+
+            <div class="stats">
+
+                <div class="card">
+
+                    <div class="stat-icon"><svg class="visual-icon" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M8 10h8M8 14h8M8 18h5"/></svg></div>
+
+                    <div class="stat-label">
+                        Atividades pendentes
+                    </div>
+
+                    <div class="stat-number" id="pendingCount">
+                        5
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="stat-icon"><svg class="visual-icon" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2M8 2v3M16 2v3"/></svg></div>
+
+                    <div class="stat-label">
+                        Próximos prazos
+                    </div>
+
+                    <div class="stat-number">
+                        3
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="stat-icon"><svg class="visual-icon" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 19V5M4 19h17"/><path d="m7 15 4-4 3 2 5-6"/><circle cx="19" cy="7" r="1"/></svg></div>
+
+                    <div class="stat-label">
+                        Meu desempenho
+                    </div>
+
+                    <div class="stat-number">
+                        84%
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="stat-icon"><svg class="visual-icon" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18m3 4-4 4-2-2"/></svg></div>
+
+                    <div class="stat-label">
+                        Dias estudando
+                    </div>
+
+                    <div class="stat-number">
+                        7
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="grid">
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <h2> Próximas atividades</h2>
+
+                        <span
+                            class="link"
+                            onclick="showPage('atividades')"
+                        >
+                            Ver todas
+                        </span>
+
+                    </div>
+
+                    <div id="dashboardActivities"></div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="card-header">
+                        <h2> Progresso</h2>
+                    </div>
+
+                    <div class="progress-item">
+
+                        <div class="progress-top">
+                            <span>Matemática</span>
+                            <strong>82%</strong>
+                        </div>
+
+                        <div class="progress-bar">
+                            <div
+                                class="progress-fill"
+                                style="width:82%"
+                            ></div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="progress-item">
+
+                        <div class="progress-top">
+                            <span>Português</span>
+                            <strong>91%</strong>
+                        </div>
+
+                        <div class="progress-bar">
+                            <div
+                                class="progress-fill"
+                                style="width:91%"
+                            ></div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="progress-item">
+
+                        <div class="progress-top">
+                            <span>Ciências</span>
+                            <strong>74%</strong>
+                        </div>
+
+                        <div class="progress-bar">
+                            <div
+                                class="progress-fill"
+                                style="width:74%"
+                            ></div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="progress-item">
+
+                        <div class="progress-top">
+                            <span>História</span>
+                            <strong>88%</strong>
+                        </div>
+
+                        <div class="progress-bar">
+                            <div
+                                class="progress-fill"
+                                style="width:88%"
+                            ></div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= ATIVIDADES ================= -->
+
+        <section id="atividades" class="page">
+
+            <div class="page-title">
+
+                <h1> Minhas atividades</h1>
+
+                <p>
+                    Todas as suas tarefas em um único lugar.
+                </p>
+
+            </div>
+
+
+            <div class="page-tools">
+              <button class="btn" type="button" onclick="toggleTaskForm()">＋ Nova atividade</button>
+              <span class="tag">Suas alterações ficam salvas neste navegador</span>
+            </div>
+            <div id="taskCreateForm" class="inline-form" hidden>
+              <h3>Criar atividade pessoal</h3>
+              <div class="toolbar-grid">
+                <label>Título<input id="newTaskTitle" maxlength="100" placeholder="Ex.: Revisar frações" required></label>
+                <label>Componente<select id="newTaskSubject"><option>Matemática</option><option>Língua Portuguesa</option><option>Ciências</option><option>História</option><option>Geografia</option><option>Língua Inglesa</option><option>Arte</option></select></label>
+                <label>Prazo<input id="newTaskDeadline" type="date"></label>
+                <label>Plataforma / origem<input id="newTaskPlatform" maxlength="80" placeholder="Ex.: Atividade da escola"></label>
+              </div>
+              <div class="form-actions"><button class="btn" type="button" onclick="createTask()">Salvar atividade</button><button class="btn btn-secondary" type="button" onclick="toggleTaskForm(false)">Cancelar</button></div>
+            </div>
+
+            <div class="filters">
+
+                <button
+                    class="filter active"
+                    onclick="filterTasks('all',this)"
+                >
+                    Todas
+                </button>
+
+                <button
+                    class="filter"
+                    onclick="filterTasks('pending',this)"
+                >
+                    Pendentes
+                </button>
+
+                <button
+                    class="filter"
+                    onclick="filterTasks('completed',this)"
+                >
+                    Concluídas
+                </button>
+
+            </div>
+
+
+            <div id="taskList"></div>
+
+        </section>
+
+
+        <!-- ================= PLATAFORMAS ================= -->
+
+        <section id="plataformas" class="page">
+
+            <div class="page-title">
+
+                <h1> Minhas plataformas</h1>
+
+                <p>
+                    Todas as plataformas educacionais que você utiliza.
+                </p>
+
+            </div>
+
+
+            <div class="platform-grid">
+
+                <div
+                    class="platform-card"
+                    onclick="openPlatform('Escola Paraná')"
+                >
+
+                    <div class="platform-logo blue">
+                        
+                    </div>
+
+                    <h3>Escola Paraná</h3>
+
+                    <p>
+                        Conteúdos, aulas e atividades da rede estadual.
+                    </p>
+
+                    <button class="btn">
+                        Acessar
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="platform-card"
+                    onclick="openPlatform('Redação Paraná')"
+                >
+
+                    <div class="platform-logo green">
+                        
+                    </div>
+
+                    <h3>Redação Paraná</h3>
+
+                    <p>
+                        Produção e acompanhamento de redações.
+                    </p>
+
+                    <button class="btn">
+                        Acessar
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="platform-card"
+                    onclick="openPlatform('Khan Academy')"
+                >
+
+                    <div class="platform-logo blue">
+                        
+                    </div>
+
+                    <h3>Khan Academy</h3>
+
+                    <p>
+                        Exercícios e conteúdos de matemática.
+                    </p>
+
+                    <button class="btn">
+                        Acessar
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="platform-card"
+                    onclick="openPlatform('Quizizz')"
+                >
+
+                    <div class="platform-logo purple">
+                        
+                    </div>
+
+                    <h3>Quizizz</h3>
+
+                    <p>
+                        Quizzes e atividades interativas.
+                    </p>
+
+                    <button class="btn">
+                        Acessar
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="platform-card"
+                    onclick="openPlatform('Biblioteca Digital')"
+                >
+
+                    <div class="platform-logo yellow">
+                        
+                    </div>
+
+                    <h3>Biblioteca Digital</h3>
+
+                    <p>
+                        Livros e materiais para seus estudos.
+                    </p>
+
+                    <button class="btn">
+                        Acessar
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="platform-card"
+                    onclick="openPlatform('Avaliações')"
+                >
+
+                    <div class="platform-logo red">
+                        
+                    </div>
+
+                    <h3>Avaliações</h3>
+
+                    <p>
+                        Provas, simulados e avaliações.
+                    </p>
+
+                    <button class="btn">
+                        Acessar
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= CALENDÁRIO ================= -->
+
+        <section id="calendario" class="page">
+
+            <div class="page-title">
+
+                <h1> Calendário</h1>
+
+                <p>
+                    Veja provas, atividades e eventos da escola.
+                </p>
+
+            </div>
+
+
+            <div class="page-tools">
+              <button class="btn" type="button" onclick="toggleCalendarEditor()">＋ Adicionar evento</button>
+              <span class="tag">Provas, entregas e compromissos pessoais</span>
+            </div>
+            <div id="calendarEditor" class="event-editor" hidden>
+              <h3>Novo evento no calendário</h3>
+              <div class="toolbar-grid">
+                <label>Data<input id="eventDate" type="date" required></label>
+                <label>Tipo<select id="eventType"><option>Atividade</option><option>Prova</option><option>Evento escolar</option><option>Lembrete pessoal</option></select></label>
+                <label>Título<input id="eventTitle" maxlength="100" placeholder="Ex.: Entrega do trabalho de Ciências" required></label>
+              </div>
+              <label>Detalhes<textarea id="eventDescription" rows="2" maxlength="300" placeholder="Horário, sala ou lembrete adicional"></textarea></label>
+              <div class="form-actions"><button class="btn" type="button" onclick="saveCalendarEvent()">Salvar evento</button><button class="btn btn-secondary" type="button" onclick="toggleCalendarEditor(false)">Cancelar</button></div>
+            </div>
+            <div id="customEventList" class="event-list"></div>
+
+            <div class="calendar">
+
+                <div class="calendar-header">
+
+                    <h2 id="monthTitle"></h2>
+
+                    <div class="calendar-controls">
+
+                        <button onclick="changeMonth(-1)">
+                            ←
+                        </button>
+
+                        <button onclick="goToday()">
+                            Hoje
+                        </button>
+
+                        <button onclick="changeMonth(1)">
+                            →
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="weekdays">
+
+                    <div>Dom</div>
+                    <div>Seg</div>
+                    <div>Ter</div>
+                    <div>Qua</div>
+                    <div>Qui</div>
+                    <div>Sex</div>
+                    <div>Sáb</div>
+
+                </div>
+
+
+                <div
+                    class="days"
+                    id="calendarDays"
+                ></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= PROGRESSO ================= -->
+
+        <section id="progresso" class="page">
+
+            <div class="page-title">
+
+                <h1> Meu progresso</h1>
+
+                <p>
+                    Acompanhe sua evolução nas disciplinas.
+                </p>
+
+            </div>
+
+
+            <div class="grid">
+
+                <div class="card">
+
+                    <h2 style="margin-bottom:25px;">
+                        Desempenho por disciplina
+                    </h2>
+
+
+                    <div class="progress-item">
+
+                        <div class="progress-top">
+                            <span>Matemática</span>
+                            <strong>82%</strong>
+                        </div>
+
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width:82%"></div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="progress-item">
+
+                        <div class="progress-top">
+                            <span>Português</span>
+                            <strong>91%</strong>
+                        </div>
+
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width:91%"></div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="progress-item">
+
+                        <div class="progress-top">
+                            <span>História</span>
+                            <strong>88%</strong>
+                        </div>
+
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width:88%"></div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="progress-item">
+
+                        <div class="progress-top">
+                            <span>Geografia</span>
+                            <strong>80%</strong>
+                        </div>
+
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width:80%"></div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="progress-item">
+
+                        <div class="progress-top">
+                            <span>Ciências</span>
+                            <strong>74%</strong>
+                        </div>
+
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width:74%"></div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h2 style="margin-bottom:20px;">
+                         Seus objetivos
+                    </h2>
+
+                    <p style="color:var(--muted);margin-bottom:20px;">
+                        Melhorar o desempenho em Ciências.
+                    </p>
+
+                    <div class="progress-bar">
+                        <div
+                            class="progress-fill"
+                            style="width:74%"
+                        ></div>
+                    </div>
+
+                    <p style="margin-top:10px;">
+                        Você está a <strong>6%</strong> de alcançar sua meta.
+                    </p>
+
+                    <button
+                        class="btn"
+                        style="margin-top:20px"
+                        onclick="toggleStudyPlan(true)"
+                    >
+                        Criar plano de estudos
+                    </button>
+
+                </div>
+
+            </div>
+            <div class="section-heading" style="margin-top:24px"><h2>Progresso calculado pelas suas atividades</h2><p>Os indicadores abaixo usam os registros deste navegador.</p></div>
+            <div id="progressDetailGrid" class="progress-detail-grid"></div>
+            <div class="planner-form" id="studyPlanForm" hidden>
+              <h3>Meu plano de estudos</h3>
+              <div class="toolbar-grid"><label>Objetivo<input id="studyGoal" maxlength="120" placeholder="Ex.: Melhorar em Matemática"></label><label>Componente<select id="studySubject"><option>Matemática</option><option>Língua Portuguesa</option><option>Ciências</option><option>História</option><option>Geografia</option><option>Língua Inglesa</option></select></label><label>Minutos por dia<input id="studyMinutes" type="number" min="5" max="240" value="25"></label><label>Data de revisão<input id="studyReviewDate" type="date"></label></div>
+              <label>Passos / estratégia<textarea id="studySteps" rows="3" placeholder="Ex.: revisar anotações, resolver 5 questões e conferir erros"></textarea></label>
+              <div class="form-actions"><button class="btn" type="button" onclick="saveStudyPlan()">Salvar plano</button><button class="btn btn-secondary" type="button" onclick="toggleStudyPlan(false)">Cancelar</button></div>
+            </div>
+            <div id="studyPlanList" class="study-plan-list"></div>
+
+        </section>
+
+
+        <!-- ================= CONQUISTAS ================= -->
+
+        <section id="conquistas" class="page">
+
+            <div class="page-title">
+
+                <h1> Conquistas</h1>
+
+                <p>
+                    Veja suas conquistas e evolução.
+                </p>
+
+            </div>
+
+
+            <div class="achievement-grid">
+
+                <div class="card achievement" data-achievement="streak">
+
+                    <div class="medal"></div>
+
+                    <h3>7 dias seguidos</h3>
+
+                    <p style="color:var(--muted);margin-top:8px;">
+                        Estude por sete dias consecutivos.
+                    </p>
+
+                </div>
+
+
+                <div class="card achievement" data-achievement="reader">
+
+                    <div class="medal"></div>
+
+                    <h3>Leitor</h3>
+
+                    <p style="color:var(--muted);margin-top:8px;">
+                        Conclua 5 atividades de leitura.
+                    </p>
+
+                </div>
+
+
+                <div class="card achievement" data-achievement="performance">
+
+                    <div class="medal">⭐</div>
+
+                    <h3>Bom desempenho</h3>
+
+                    <p style="color:var(--muted);margin-top:8px;">
+                        Alcance média superior a 80%.
+                    </p>
+
+                </div>
+
+
+                <div class="card achievement" data-achievement="first">
+
+                    <div class="medal"></div>
+
+                    <h3>Primeiro passo</h3>
+
+                    <p style="color:var(--muted);margin-top:8px;">
+                        Complete sua primeira atividade.
+                    </p>
+
+                </div>
+
+
+                <div class="card achievement" data-achievement="assistant">
+
+                    <div class="medal"></div>
+
+                    <h3>Curioso</h3>
+
+                    <p style="color:var(--muted);margin-top:8px;">
+                        Utilize o assistente de estudos.
+                    </p>
+
+                </div>
+
+
+                <div class="card achievement" data-achievement="school">
+
+                    <div class="medal"></div>
+
+                    <h3>Aluno conectado</h3>
+
+                    <p style="color:var(--muted);margin-top:8px;">
+                        Explore a área Minha Escola.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= MEU PET ================= -->
+        <section id="pet" class="page">
+          <div class="page-heading">
+            <div><span class="eyebrow">SCORE · COMPANHEIRO DE ESTUDOS</span><h1>Meu pet</h1><p>Cuide do seu companheiro, personalize sua aparência e use as moedas que conquista estudando.</p></div>
+          </div>
+          <div class="pet-layout">
+            <div class="card pet-showcase">
+              <div class="pet-sparkles" aria-hidden="true">✦　✧　✦</div>
+              <div class="pet-avatar" id="petAvatar" aria-label="Seu companheiro virtual"></div>
+              <span class="pet-level" id="petLevel">Nível 1 · Companheiro</span>
+              <h2 id="petNameDisplay">Pipoca</h2>
+              <p id="petMood">Estou feliz por estudar com você!</p>
+              <div class="pet-xp"><div class="pet-xp-label"><span>Experiência do pet</span><strong id="petXpLabel">0 / 100 XP</strong></div><div class="pet-xp-track" role="progressbar" aria-label="Experiência do pet" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="petXpFill" class="pet-xp-fill" style="width:0%"></div></div></div>
+              <div class="pet-happiness"><div class="pet-xp-label"><span>Bem-estar</span><strong id="petHappinessLabel">70%</strong></div><div class="pet-xp-track pet-happiness-track" role="progressbar" aria-label="Bem-estar do pet" aria-valuemin="0" aria-valuemax="100" aria-valuenow="70"><div id="petHappinessFill" class="pet-happiness-fill" style="width:70%"></div></div></div>
+              <div class="pet-action-row"><button type="button" class="btn" onclick="feedPet()">Dar carinho · 15 moedas</button><button type="button" class="btn btn-secondary" onclick="playWithPet()">Brincar · 10 moedas</button></div>
+              <p id="petActionStatus" class="pet-action-status" role="status" aria-live="polite">Seu pet está pronto para a próxima aventura.</p>
+            </div>
+            <div class="pet-side">
+              <div class="card coin-summary"><div><span class="muted">Seu saldo</span><h2><span id="petCoinBalance">0</span> moedas</h2><p>Ganhe 10 moedas e 5 XP ao concluir uma atividade pela primeira vez. Acertos nos quizzes também dão experiência.</p></div></div>
+              <div class="card pet-customize-card">
+                <div class="shop-heading"><div><h2>Personalizar companheiro</h2><p>Escolha um nome e a cor do seu pet.</p></div></div>
+                <div class="pet-name-form"><label for="petNameInput">Nome do pet</label><div class="pet-name-input-row"><input id="petNameInput" maxlength="24" value="Pipoca" placeholder="Dê um nome ao pet"><button type="button" class="btn" onclick="savePetName()">Salvar</button></div></div>
+                <div class="pet-name-form"><label for="petColorSelect">Cor do companheiro</label><select id="petColorSelect" onchange="changePetColor(this.value)"><option value="oceano">Azul Conecta</option><option value="lilas">Lilás</option><option value="pessego">Pêssego</option><option value="floresta">Verde floresta</option></select></div>
+              </div>
+              <div class="card shop-card">
+                <div class="shop-heading"><div><h2>Loja do pet</h2><p>Acessórios comprados ficam disponíveis no seu companheiro.</p></div><span class="shop-brand-dot" aria-hidden="true"></span></div>
+                <div class="shop-item"><div class="shop-item-icon" aria-hidden="true"><svg class="visual-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15c1-5 5-8 9-8s8 3 9 8H3z"/><path d="M2 16h20M6 6l2-2m8 2-2-2"/></svg></div><div class="shop-item-copy"><strong>Boné azul</strong><small>Um visual esportivo para as aulas.</small></div><button type="button" class="shop-buy" data-pet-item="cap" onclick="buyPetItem('cap',30)">30 moedas</button></div>
+                <div class="shop-item"><div class="shop-item-icon" aria-hidden="true"><svg class="visual-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18M5.5 5.5l13 13m0-13-13 13"/><circle cx="12" cy="12" r="8"/></svg></div><div class="shop-item-copy"><strong>Aura brilhante</strong><small>Um brilho especial em volta do pet.</small></div><button type="button" class="shop-buy" data-pet-item="aura" onclick="buyPetItem('aura',40)">40 moedas</button></div>
+                <div class="shop-item"><div class="shop-item-icon" aria-hidden="true"><svg class="visual-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="12" r="4"/><circle cx="17" cy="12" r="4"/><path d="M11 12h2M3 10l-1-2m19 2 1-2"/></svg></div><div class="shop-item-copy"><strong>Óculos divertidos</strong><small>Para um companheiro cheio de estilo.</small></div><button type="button" class="shop-buy" data-pet-item="glasses" onclick="buyPetItem('glasses',35)">35 moedas</button></div>
+                <div class="shop-item"><div class="shop-item-icon" aria-hidden="true"><svg class="visual-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12C8 5 4 6 4 10s4 5 8 2M12 12c4-7 8-6 8-2s-4 5-8 2M12 12v8"/></svg></div><div class="shop-item-copy"><strong>Laço Conecta</strong><small>Um detalhe para deixar o pet único.</small></div><button type="button" class="shop-buy" data-pet-item="bow" onclick="buyPetItem('bow',25)">25 moedas</button></div>
+                <div class="shop-item"><div class="shop-item-icon" aria-hidden="true"><svg class="visual-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c2 4 6 6 6 11a6 6 0 0 1-12 0c0-5 4-7 6-11z"/><path d="M9 15c0 2 1 3 3 3"/></svg></div><div class="shop-item-copy"><strong>Petisco especial</strong><small>Consuma para ganhar 25 XP e bem-estar.</small></div><button type="button" class="shop-buy" data-pet-item="treat" onclick="buyPetItem('treat',20)">20 moedas</button></div>
+                <div class="shop-item"><div class="shop-item-icon" aria-hidden="true"><svg class="visual-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.5 5.2L20 11l-5.5 2.8L12 20l-2.5-6.2L4 11l5.5-2.8z"/><path d="M19 3v4M17 5h4"/></svg></div><div class="shop-item-copy"><strong>Evoluir de nível</strong><small>Requer 50 XP e 50 moedas.</small></div><button type="button" class="shop-buy" data-pet-item="evolve" onclick="buyPetItem('evolve',50)">50 moedas</button></div>
+              </div>
+            </div>
+          </div>
+          <div class="card pet-tip"><strong>Dica:</strong> estudar ajuda seu companheiro a evoluir; cuidar dele aumenta seu bem-estar, e os acessórios comprados ficam salvos neste navegador.</div>
+        </section>
+
+        <!-- ================= ESCOLA ================= -->
+
+        <section id="escola" class="page">
+
+            <div class="page-title">
+
+                <h1> Minha escola</h1>
+
+                <p>
+                    Tudo o que acontece na sua escola.
+                </p>
+
+            </div>
+
+
+            <div class="school-grid">
+
+                <div class="school-option">
+
+                    <div class="big-icon"><svg class="visual-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 4.5A2.5 2.5 0 0 1 5.5 2H12v18H5.5A2.5 2.5 0 0 0 3 22zM21 4.5A2.5 2.5 0 0 0 18.5 2H12v18h6.5a2.5 2.5 0 0 1 2.5 2z"/></svg></div>
+
+                    <h2>Biblioteca</h2>
+
+                    <p style="color:var(--muted);margin:8px 0 15px;">
+                        248 livros disponíveis.
+                    </p>
+
+                    <button
+                        class="btn"
+                        onclick="openModal(
+                        'Biblioteca',
+                        'Você possui 1 livro emprestado. Devolução até 27/08.'
+                        )"
+                    >
+                        Ver biblioteca
+                    </button>
+
+                </div>
+
+
+                <div class="school-option">
+
+                    <div class="big-icon"><svg class="visual-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 2v8M4 2v5a3 3 0 0 0 6 0V2M7 10v12M17 2c-2 2-3 5-3 9h4v11M18 2v9"/></svg></div>
+
+                    <h2>Cardápio</h2>
+
+                    <p style="color:var(--muted);margin:8px 0 15px;">
+                        Confira a alimentação de hoje.
+                    </p>
+
+                    <button
+                        class="btn"
+                        onclick="openModal(
+                        'Cardápio de hoje',
+                        'Arroz, feijão, frango, salada e fruta.'
+                        )"
+                    >
+                        Ver cardápio
+                    </button>
+
+                </div>
+
+
+                <div class="school-option">
+
+                    <div class="big-icon"><svg class="visual-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg></div>
+
+                    <h2>Avisos</h2>
+
+                    <p style="color:var(--muted);margin:8px 0 15px;">
+                        3 novos avisos da escola.
+                    </p>
+
+                    <button
+                        class="btn"
+                        onclick="openModal(
+                        'Avisos',
+                        'Feira de Ciências será realizada no dia 28/08. Inscrições abertas.'
+                        )"
+                    >
+                        Ver avisos
+                    </button>
+
+                </div>
+
+
+                <div class="school-option">
+
+                    <div class="big-icon"><svg class="visual-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15M15 6v15"/></svg></div>
+
+                    <h2>Mapa da escola</h2>
+
+                    <p style="color:var(--muted);margin:8px 0 15px;">
+                        Encontre salas e espaços.
+                    </p>
+
+                    <button
+                        class="btn"
+                        onclick="openModal(
+                        'Mapa',
+                        'Use o mapa abaixo para encontrar os espaços da escola.'
+                        )"
+                    >
+                        Abrir mapa
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="card" style="margin-top:20px;">
+
+                <h2 style="margin-bottom:20px;">
+                     Mapa da escola
+                </h2>
+
+<p class="school-map-note">Mapa ilustrativo demonstrativo. Selecione um espaço para ver sua identificação.</p>
+                <h3 class="map-schematic-title">Mapa ilustrativo da escola</h3>
+                <div class="map">
+
+                    <div
+                        class="room"
+                        style="left:5%;top:10%;width:25%;height:25%"
+                        onclick="alert('Sala 01 — 8º Ano')"
+                    >
+                        Sala 01
+                    </div>
+
+                    <div
+                        class="room"
+                        style="left:35%;top:10%;width:25%;height:25%"
+                        onclick="alert('Sala 02 — 8º Ano')"
+                    >
+                        Sala 02
+                    </div>
+
+                    <div
+                        class="room"
+                        style="left:65%;top:10%;width:28%;height:25%"
+                        onclick="alert('Laboratório de Ciências')"
+                    >
+                         Laboratório
+                    </div>
+
+                    <div
+                        class="room"
+                        style="left:5%;top:48%;width:35%;height:38%"
+                        onclick="alert('Biblioteca')"
+                    >
+                         Biblioteca
+                    </div>
+
+                    <div
+                        class="room"
+                        style="left:47%;top:48%;width:46%;height:38%"
+                        onclick="alert('Quadra esportiva')"
+                    >
+                         Quadra
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= IA ================= -->
+
+        <section id="ia" class="page">
+
+            <div class="page-title">
+
+                <h1> Assistente de estudos</h1>
+
+                <p>
+                    Tire dúvidas e organize seus estudos.
+                </p>
+
+            </div>
+
+
+            <div class="ai-box">
+
+                <div class="chat" id="chat">
+
+                    <div class="message ai">
+
+                         Olá! Sou seu assistente de estudos.
+                        Posso ajudar você a organizar suas atividades,
+                        revisar conteúdos ou explicar assuntos.
+
+                    </div>
+
+                </div>
+
+
+                <div class="chat-input">
+
+                    <input
+                        id="aiInput"
+                        placeholder="Digite sua pergunta..."
+                        onkeydown="if(event.key==='Enter') sendMessage()"
+                    >
+
+                    <button
+                        class="btn"
+                        onclick="sendMessage()"
+                    >
+                        Enviar
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= PERFIL ================= -->
+
+
+        <section id="habilidades" class="page">
+          <div class="page-heading"><div><span class="eyebrow">CURRÍCULO E APRENDIZAGEM</span><h1>Habilidades e etapas</h1><p>Explore objetivos de aprendizagem por etapa, componente curricular e habilidade.</p></div></div>
+          <div class="notice-card"><strong>Referência curricular</strong><p>Estrutura demonstrativa alinhada à organização geral da BNCC e do Referencial Curricular do Paraná. Os códigos e descrições precisam ser conferidos pela equipe pedagógica antes do uso oficial.</p></div>
+          <div class="toolbar-grid">
+            <label>Etapa<select id="skillStage" onchange="renderSkills()"><option>6º ano — Ensino Fundamental</option><option>7º ano — Ensino Fundamental</option><option>8º ano — Ensino Fundamental</option><option>9º ano — Ensino Fundamental</option><option>1ª série — Ensino Médio</option><option>2ª série — Ensino Médio</option><option>3ª série — Ensino Médio</option></select></label>
+            <label>Componente<select id="skillSubject" onchange="renderSkills()"><option value="Todos">Todos os componentes</option><option>Língua Portuguesa</option><option>Matemática</option><option>Ciências</option><option>História</option><option>Geografia</option><option>Arte</option><option>Educação Física</option><option>Língua Inglesa</option><option>Ensino Religioso</option><option>Projeto de Vida</option></select></label>
+            <label>Buscar habilidade<input id="skillSearch" oninput="renderSkills()" placeholder="Ex.: argumentação, frações, ambiente"></label>
+          </div>
+          <div id="skillsGrid" class="skills-grid"></div>
+        </section>
+
+        <section id="banco" class="page">
+          <div class="page-heading"><div><span class="eyebrow">PRÁTICA E AVALIAÇÃO</span><h1>Banco de atividades</h1><p>Atividades por matéria, habilidade, nível e formato — com correção imediata para os quizzes.</p></div></div>
+          <div class="toolbar-grid">
+            <label>Matéria<select id="bankSubject" onchange="renderBank()"><option value="Todas">Todas</option><option>Matemática</option><option>Língua Portuguesa</option><option>Ciências</option><option>História</option><option>Geografia</option><option>Língua Inglesa</option></select></label>
+            <label>Formato<select id="bankType" onchange="renderBank()"><option value="Todos">Todos</option><option value="Quiz">Quiz</option><option value="Leitura">Leitura</option><option value="Produção">Produção</option><option value="Investigação">Investigação</option></select></label>
+            <label>Etapa<select id="bankStage" onchange="renderBank()"><option value="Todas">Todas</option><option>6º ano</option><option>7º ano</option><option>8º ano</option><option>9º ano</option><option>Ensino Médio</option></select></label>
+          </div>
+          <div id="bankGrid" class="bank-grid"></div>
+          <div id="quizArea" class="quiz-area" hidden></div>
+        </section>
+
+        <section id="docente" class="page role-page role-professor">
+          <div class="page-heading"><div><span class="eyebrow">ESPAÇO PROFISSIONAL</span><h1>Painel do professor</h1><p>Planeje, atribua atividades e acompanhe evidências de aprendizagem da turma.</p></div><button class="btn" onclick="openAssignmentForm()">＋ Criar atividade</button></div>
+          <div class="stats-grid">
+            <div class="stat-card"><span>Atividades no banco</span><strong id="teacherBankCount">0</strong><small>Materiais disponíveis</small></div>
+            <div class="stat-card"><span>Atividades atribuídas</span><strong id="teacherAssignments">0</strong><small>Protótipo local</small></div>
+            <div class="stat-card"><span>Habilidades mapeadas</span><strong id="teacherSkillsCount">0</strong><small>Por componente</small></div>
+          </div>
+          <div class="section-heading"><h2>Planejamento da turma</h2><p>Exemplo editável para demonstração</p></div>
+          <div class="table-wrap"><table class="data-table"><thead><tr><th>Turma</th><th>Componente</th><th>Foco de aprendizagem</th><th>Status</th></tr></thead><tbody><tr><td>8º A</td><td>Matemática</td><td>Resolver problemas com porcentagem</td><td><span class="status-pill">Em andamento</span></td></tr><tr><td>8º A</td><td>Língua Portuguesa</td><td>Argumentação e evidências textuais</td><td><span class="status-pill">Planejado</span></td></tr><tr><td>8º A</td><td>Ciências</td><td>Ecossistemas e relações ambientais</td><td><span class="status-pill">Em andamento</span></td></tr></tbody></table></div>
+          <div class="section-heading"><h2>Atividades criadas nesta sessão</h2></div><div id="assignmentList" class="assignment-list"></div>
+          <div id="assignmentForm" class="inline-form" hidden><h3>Nova atividade</h3><label>Título<input id="assignmentTitle" placeholder="Ex.: Revisão de porcentagem"></label><div class="toolbar-grid"><label>Componente<select id="assignmentSubject"><option>Matemática</option><option>Língua Portuguesa</option><option>Ciências</option><option>História</option><option>Geografia</option><option>Língua Inglesa</option></select></label><label>Turma<select id="assignmentClass"><option>6º A</option><option>7º A</option><option>8º A</option><option>9º A</option><option>1ª série EM</option><option>2ª série EM</option><option>3ª série EM</option></select></label></div><label>Instruções<textarea id="assignmentInstructions" rows="3" placeholder="Descreva o objetivo e o que a turma deve entregar."></textarea></label><label>Prazo de entrega<input id="assignmentDueDate" type="date"></label><div class="form-actions"><button class="btn" onclick="saveAssignment()">Salvar atividade</button><button class="btn btn-secondary" onclick="closeAssignmentForm()">Cancelar</button></div></div>
+        </section>
+
+        <section id="pedagogico" class="page role-page role-pedagogo">
+          <div class="page-heading"><div><span class="eyebrow">GESTÃO DA APRENDIZAGEM</span><h1>Visão pedagógica</h1><p>Indicadores de acompanhamento, planejamento e pontos de atenção — com dados fictícios de demonstração.</p></div></div>
+          <div class="stats-grid">
+            <div class="stat-card"><span>Estudantes acompanhados</span><strong>128</strong><small>Base fictícia</small></div>
+            <div class="stat-card"><span>Participação nas atividades</span><strong>84%</strong><small>Exemplo ilustrativo</small></div>
+            <div class="stat-card"><span>Habilidades em foco</span><strong>12</strong><small>Plano de intervenção</small></div>
+            <div class="stat-card"><span>Turmas com atenção</span><strong>3</strong><small>Requer análise da equipe</small></div>
+          </div>
+          <div class="notice-card"><strong>Importante para decisões pedagógicas</strong><p>Os números são fictícios e não devem ser usados para avaliar estudantes reais. Em uma implantação, indicadores precisam vir do sistema escolar autorizado, ser contextualizados e nunca substituir a análise profissional.</p></div>
+          <div class="section-heading"><h2>Plano de acompanhamento</h2></div>
+          <div class="table-wrap"><table class="data-table"><thead><tr><th>Foco</th><th>Evidência observada (exemplo)</th><th>Ação sugerida</th><th>Responsável</th></tr></thead><tbody><tr><td>Leitura e interpretação</td><td>Questões inferenciais com maior dificuldade</td><td>Roda de leitura e estratégias de compreensão</td><td>Docentes de Linguagens</td></tr><tr><td>Resolução de problemas</td><td>Necessidade de explicitar estratégias</td><td>Sequência didática e resolução comentada</td><td>Docentes de Matemática</td></tr><tr><td>Participação</td><td>Entrega irregular em atividades digitais</td><td>Escuta ativa e contato com responsáveis</td><td>Equipe pedagógica</td></tr></tbody></table></div>
+          <div class="section-heading" style="margin-top:22px"><h2>Registros de acompanhamento da equipe</h2><button class="btn" type="button" onclick="togglePedActionForm()">＋ Novo encaminhamento</button></div>
+          <div id="pedActionForm" class="inline-form" hidden><h3>Novo encaminhamento pedagógico</h3><div class="toolbar-grid"><label>Foco<input id="pedActionFocus" maxlength="100" placeholder="Ex.: Leitura e interpretação"></label><label>Responsável<input id="pedActionOwner" maxlength="80" placeholder="Equipe / profissional"></label><label>Data de retorno<input id="pedActionDate" type="date"></label></div><label>Ação combinada<textarea id="pedActionText" rows="3" maxlength="500" placeholder="Descreva a ação e como será acompanhada"></textarea></label><div class="form-actions"><button class="btn" onclick="savePedAction()" type="button">Salvar encaminhamento</button><button class="btn btn-secondary" onclick="togglePedActionForm(false)" type="button">Cancelar</button></div></div>
+          <div id="pedActionList" class="assignment-list"></div>
+        </section>
+
+        <section id="familia" class="page role-page role-responsavel">
+          <div class="page-heading"><div><span class="eyebrow">PARCERIA ESCOLA E FAMÍLIA</span><h1>Área do responsável</h1><p>Acompanhe rotina, atividades e comunicados do estudante vinculado à família.</p></div></div>
+          <div class="notice-card"><strong>Estudante vinculado (demonstração)</strong><p>João Silva • 8º ano A • Colégio Estadual Exemplo</p><small>Em uma versão oficial, o vínculo é autorizado pela escola e os dados são exibidos somente ao responsável autenticado.</small></div>
+          <div class="stats-grid"><div class="stat-card"><span>Atividades concluídas</span><strong id="familyCompleted">0</strong><small>Neste navegador</small></div><div class="stat-card"><span>Atividades pendentes</span><strong id="familyPending">0</strong><small>Neste navegador</small></div><div class="stat-card"><span>Moedas educativas</span><strong id="familyCoins">0</strong><small>Recompensas de estudo</small></div></div>
+          <div class="section-heading"><h2>Como apoiar em casa</h2></div><div class="tip-grid"><article class="tip-card"><span></span><h3>Combine uma rotina</h3><p>Separe um horário realista para estudar, descansar e revisar o calendário escolar.</p></article><article class="tip-card"><span></span><h3>Converse sobre a aprendizagem</h3><p>Pergunte o que foi interessante, o que foi difícil e que tipo de apoio seria útil.</p></article><article class="tip-card"><span></span><h3>Valorize o processo</h3><p>Reconheça esforço, curiosidade, persistência e progresso — não apenas notas.</p></article></div>
+          <div class="section-heading"><h2>Atividades do estudante</h2></div><div id="familyTaskList" class="family-task-list"></div>
+        </section>
+
+
+        <section id="disciplinas" class="page">
+          <div class="page-heading"><div><span class="eyebrow">TRILHAS DE APRENDIZAGEM</span><h1>Disciplinas</h1><p>Entre em cada componente para encontrar atividades, habilidades, materiais e metas.</p></div></div>
+          <div class="subject-filter"><label for="subjectSearch">Buscar disciplina</label><input id="subjectSearch" oninput="renderSubjects()" placeholder="Digite uma matéria..."></div>
+          <div id="subjectsGrid" class="subjects-grid"></div>
+          <div id="subjectDetail" class="subject-detail" hidden></div>
+        </section>
+
+        <section id="biblioteca" class="page">
+          <div class="page-heading"><div><span class="eyebrow">RECURSOS PARA APRENDER</span><h1>Biblioteca digital</h1><p>Materiais de leitura, vídeos e referências organizados por componente.</p></div><button class="btn" onclick="openResourceForm()">＋ Adicionar recurso</button></div>
+          <div class="toolbar-grid">
+            <label>Componente<select id="librarySubject" onchange="renderLibrary()"><option value="Todos">Todos</option><option>Matemática</option><option>Língua Portuguesa</option><option>Ciências</option><option>História</option><option>Geografia</option><option>Língua Inglesa</option><option>Arte</option></select></label>
+            <label>Tipo<select id="libraryType" onchange="renderLibrary()"><option value="Todos">Todos</option><option>Leitura</option><option>Vídeo</option><option>Guia</option><option>Link</option></select></label>
+            <label>Buscar<input id="librarySearch" oninput="renderLibrary()" placeholder="Título ou assunto"></label>
+          </div>
+          <div id="libraryGrid" class="library-grid"></div>
+          <div id="resourceForm" class="inline-form" hidden><h3>Novo recurso</h3><label>Título<input id="resourceTitle" maxlength="100" placeholder="Título do material"></label><div class="toolbar-grid"><label>Componente<select id="resourceSubject"><option>Matemática</option><option>Língua Portuguesa</option><option>Ciências</option><option>História</option><option>Geografia</option><option>Língua Inglesa</option><option>Arte</option></select></label><label>Tipo<select id="resourceType"><option>Leitura</option><option>Vídeo</option><option>Guia</option><option>Link</option></select></label><label>URL (opcional)<input id="resourceUrl" type="url" placeholder="https://..."></label></div><label>Descrição<input id="resourceDescription" maxlength="250" placeholder="Resumo do material"></label><div class="form-actions"><button class="btn" onclick="saveResource()">Salvar recurso</button><button class="btn btn-secondary" onclick="closeResourceForm()">Cancelar</button></div></div>
+        </section>
+
+        <section id="turma-chat" class="page">
+          <div class="page-heading"><div><span class="eyebrow">COMUNICAÇÃO DA EQUIPE</span><h1>Chat por turma</h1><p>Um canal separado para professores e equipe pedagógica alinharem avisos, dúvidas e encaminhamentos de cada turma.</p></div><span class="chat-access-tag">Acesso da equipe</span></div>
+          <div class="notice-card chat-privacy-note"><strong>Combine informações com responsabilidade</strong><p>Use este canal para comunicação profissional sobre atividades, planejamento e organização da turma. Evite publicar dados pessoais sensíveis dos estudantes. Esta versão salva as conversas neste navegador.</p></div>
+          <div class="class-chat-layout">
+            <aside class="class-channel-panel" aria-label="Canais por turma"><div class="class-channel-panel-heading"><div><h2>Turmas</h2><p>Selecione um canal</p></div><span class="class-channel-count">11 canais</span></div>
+              <label class="class-chat-select-label" for="classChatChannel">Escolher turma</label>
+              <select id="classChatChannel" onchange="renderClassChat()"><option value="6A">6º ano A</option><option value="6B">6º ano B</option><option value="7A">7º ano A</option><option value="7B">7º ano B</option><option value="8A" selected>8º ano A</option><option value="8B">8º ano B</option><option value="9A">9º ano A</option><option value="9B">9º ano B</option><option value="1EM">1º ano do Ensino Médio</option><option value="2EM">2º ano do Ensino Médio</option><option value="3EM">3º ano do Ensino Médio</option></select>
+              <div id="classChatChannels" class="chat-channel-list"></div>
+              <div class="chat-channel-footnote"><span class="chat-online-dot"></span> Canais organizados por turma</div>
+            </aside>
+            <div class="class-chat-window"><header class="class-chat-header"><div><span class="eyebrow">CANAL DA TURMA</span><h2 id="classChatTitle">Canal · 8º ano A</h2><p id="classChatSubtitle">Professores e equipe pedagógica • 8º ano A</p></div><button type="button" class="btn btn-secondary" onclick="exportClassChat()">Exportar conversa</button></header>
+              <div id="classChatMessages" class="class-chat-messages" aria-live="polite" aria-label="Mensagens da turma"></div>
+              <form id="classChatForm" class="class-chat-composer"><label class="sr-only" for="classChatInput">Escreva uma mensagem</label><textarea id="classChatInput" rows="2" maxlength="2000" placeholder="Escreva uma mensagem para 8º ano A…" required></textarea><button type="submit" class="btn class-chat-send"><span>Enviar mensagem</span><span aria-hidden="true">➤</span></button><div id="classChatStatus" class="class-chat-status" aria-live="polite">As mensagens ficam salvas neste navegador.</div></form>
+            </div>
+          </div>
+        </section>
+
+        <section id="notificacoes" class="page">
+          <div class="page-heading"><div><span class="eyebrow">CENTRAL DE AVISOS</span><h1>Notificações</h1><p>Organize os avisos importantes e marque o que já foi lido.</p></div><button class="btn btn-secondary" onclick="markAllNotificationsRead()">Marcar tudo como lido</button></div>
+          <div id="notificationList" class="notification-list"></div>
+        </section>
+
+        <section id="acessibilidade" class="page">
+          <div class="page-heading"><div><span class="eyebrow">INCLUSÃO E CONFORTO</span><h1>Acessibilidade</h1><p>Personalize a leitura e a navegação de acordo com suas necessidades.</p></div></div>
+          <div class="access-grid">
+            <article class="access-card"><span class="access-symbol"><svg class="visual-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="7" r="1.2"/><path d="M6.5 10h11M12 10v9M12 13l-4 5M12 13l4 5"/></svg></span><h3>Tamanho do texto</h3><p>Amplie ou reduza o texto da interface.</p><div class="access-actions"><button class="btn btn-secondary" onclick="changeFontSize(-1)" aria-label="Diminuir fonte">A−</button><button class="btn" onclick="changeFontSize(0)" aria-label="Restaurar fonte">Padrão</button><button class="btn btn-secondary" onclick="changeFontSize(1)" aria-label="Aumentar fonte">A+</button></div><p id="fontSizeStatus" class="access-status">Tamanho padrão</p></article>
+            <article class="access-card"><span class="access-symbol"><svg class="visual-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span><h3>Alto contraste</h3><p>Aumenta a diferenciação entre texto, fundo e controles.</p><button id="contrastToggle" class="btn" onclick="toggleHighContrast()">Ativar alto contraste</button></article>
+            <article class="access-card"><span class="access-symbol"><svg class="visual-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.6a8 8 0 0 1-1.5.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.5-.9l-1.7.6-1.4-2.4 1.4-1.1a7 7 0 0 1 0-1.8l-1.4-1.1 1.4-2.4 1.7.6a8 8 0 0 1 1.5-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.5.9l1.7-.6 1.4 2.4-1.4 1.1a7 7 0 0 1 0 1.8z"/></svg></span><h3>Navegação por teclado</h3><p>Use Tab para avançar, Shift+Tab para voltar e Enter ou Espaço para acionar controles. O foco deve permanecer visível.</p><span class="tag green">Suporte de interface</span></article>
+            <article class="access-card"><span class="access-symbol"><svg class="visual-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.6a8 8 0 0 1-1.5.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.5-.9l-1.7.6-1.4-2.4 1.4-1.1a7 7 0 0 1 0-1.8l-1.4-1.1 1.4-2.4 1.7.6a8 8 0 0 1 1.5-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.5.9l1.7-.6 1.4 2.4-1.4 1.1a7 7 0 0 1 0 1.8z"/></svg></span><h3>Preferências</h3><p>As opções de visual ficam salvas neste navegador.</p><button class="btn btn-secondary" onclick="resetAccessibility()">Restaurar preferências</button></article>
+          </div>
+          <div class="access-grid access-grid-extended">
+            <article class="access-card"><span class="access-symbol"><svg class="visual-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 9 9 0 0 1-4-.9L3 21l1.9-5.5a9 9 0 0 1-.9-4A8.5 8.5 0 0 1 12.5 3H13a8.5 8.5 0 0 1 8 8z"/><path d="M8 12h.01M12 12h.01M16 12h.01"/></svg></span><h3>Leitura em voz alta</h3><p>O navegador pode ler o conteúdo da área atual. A disponibilidade de vozes depende do dispositivo.</p><div class="access-actions"><button class="btn" onclick="readCurrentPage()"> Ler página</button><button class="btn btn-secondary" onclick="stopReadingPage()">Parar leitura</button></div><p id="speechStatus" class="access-status" aria-live="polite">Leitura pronta.</p></article>
+            <article class="access-card"><span class="access-symbol"><svg class="visual-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 1 4 17.5z"/><path d="M4 16.5A2.5 2.5 0 0 1 6.5 14H20M8 7h7M8 10h5"/></svg></span><h3>Fonte amigável à leitura</h3><p>Use uma tipografia sem serifa e espaçamento mais aberto para facilitar o acompanhamento visual.</p><button id="readFontToggle" class="btn btn-secondary" onclick="toggleReadableFont()">Ativar fonte amigável</button></article>
+            <article class="access-card"><span class="access-symbol"><svg class="visual-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M8 14h2M14 14h2M8 17h2"/></svg></span><h3>Espaçamento de leitura</h3><p>Aumente o espaço entre linhas e parágrafos para reduzir a sensação de bloco de texto.</p><button id="spacingToggle" class="btn btn-secondary" onclick="toggleReadingSpacing()">Aumentar espaçamento</button></article>
+            <article class="access-card"><span class="access-symbol"><svg class="visual-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span><h3>Guia de leitura</h3><p>Uma faixa acompanha o ponteiro para ajudar a manter a linha de leitura.</p><button id="readingGuideToggle" class="btn btn-secondary" onclick="toggleReadingGuide()">Ativar guia de leitura</button></article>
+            <article class="access-card"><span class="access-symbol"><svg class="visual-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.6a8 8 0 0 1-1.5.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.5-.9l-1.7.6-1.4-2.4 1.4-1.1a7 7 0 0 1 0-1.8l-1.4-1.1 1.4-2.4 1.7.6a8 8 0 0 1 1.5-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.5.9l1.7-.6 1.4 2.4-1.4 1.1a7 7 0 0 1 0 1.8z"/></svg></span><h3>Reduzir animações</h3><p>Reduz transições e movimentos visuais da interface.</p><button id="motionToggle" class="btn btn-secondary" onclick="toggleReducedMotion()">Reduzir movimento</button></article>
+            <article class="access-card"><span class="access-symbol"><svg class="visual-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0M16 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 5"/></svg></span><h3>Atalhos úteis</h3><p><kbd>Alt</kbd> + <kbd>1</kbd> Início · <kbd>Alt</kbd> + <kbd>2</kbd> Minha escola · <kbd>Alt</kbd> + <kbd>3</kbd> Treinar · <kbd>Alt</kbd> + <kbd>4</kbd> Score · <kbd>Alt</kbd> + <kbd>5</kbd> Desempenho · <kbd>Esc</kbd> parar leitura/guia.</p><span class="tag green">Atalhos de teclado</span></article>
+          </div>
+          <div class="notice-card"><strong>Compromisso de acessibilidade</strong><p>Estas funções ampliam as opções de acesso, mas não substituem auditoria WCAG 2.2 AA, testes com leitores de tela e participação de pessoas com deficiência. Leitura em voz alta usa os recursos disponíveis no navegador.</p></div>
+        </section>
+
+        <section id="administracao" class="page role-page role-admin">
+          <div class="page-heading"><div><span class="eyebrow">GESTÃO DA PLATAFORMA</span><h1>Administração escolar</h1><p>Área de demonstração para organizar cadastros e configurações da instituição.</p></div><button class="btn" onclick="openUserForm()">＋ Cadastrar usuário demonstrativo</button></div>
+          <div class="stats-grid">
+            <div class="stat-card"><span>Perfis disponíveis</span><strong>5</strong><small>Aluno, professor, pedagogo, responsável e admin</small></div>
+            <div class="stat-card"><span>Disciplinas</span><strong id="adminSubjectCount">10</strong><small>Catálogo de demonstração</small></div>
+            <div class="stat-card"><span>Recursos digitais</span><strong id="adminResourceCount">0</strong><small>Biblioteca local</small></div>
+            <div class="stat-card"><span>Usuários criados</span><strong id="adminUserCount">0</strong><small>Somente nesta sessão/navegador</small></div>
+          </div>
+          <div class="notice-card"><strong>Segurança</strong><p>Este painel não cria contas de autenticação reais. Em produção, somente um administrador autenticado no servidor pode criar usuários, definir permissões e vincular responsáveis a estudantes.</p></div>
+          <div id="userForm" class="inline-form" hidden><h3>Novo usuário demonstrativo</h3><label>Nome<input id="newUserName" maxlength="80" placeholder="Nome de exibição"></label><div class="toolbar-grid"><label>Perfil<select id="newUserRole"><option>Aluno</option><option>Professor</option><option>Pedagogo</option><option>Responsável</option></select></label><label>Turma/área<input id="newUserGroup" placeholder="Ex.: 8º A ou Ciências"></label><label>Identificador<input id="newUserId" placeholder="Ex.: usuario.teste"></label></div><div class="form-actions"><button class="btn" onclick="saveDemoUser()">Salvar usuário</button><button class="btn btn-secondary" onclick="document.getElementById('userForm').hidden=true">Cancelar</button></div></div>
+          <div class="section-heading"><h2>Usuários demonstrativos criados</h2><button class="btn btn-secondary" onclick="exportDemoData()">Exportar dados locais (JSON)</button></div>
+          <div id="adminUserList" class="assignment-list"></div>
+        </section>
+
+        <section id="perfil" class="page">
+
+            <div class="page-title">
+
+                <h1> Meu perfil</h1>
+
+                <p>
+                    Gerencie suas informações.
+                </p>
+
+            </div>
+
+
+            <div class="card profile-card">
+
+                <div class="profile-header">
+
+                    <div class="big-avatar">
+                        JS
+                    </div>
+
+                    <h2 id="profileName">
+                        João Silva
+                    </h2>
+
+                    <p style="color:var(--muted);">
+                        8º Ano • Turma A
+                    </p>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>Nome</label>
+
+                    <input
+                        id="nameInput"
+                        value="João Silva"
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>Turma</label>
+
+                    <input
+                        value="8º Ano — Turma A"
+                        disabled
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>Escola</label>
+
+                    <input
+                        value="Colégio Estadual Exemplo"
+                        disabled
+                    >
+
+                </div>
+
+
+                <button
+                    class="btn"
+                    onclick="saveProfile()"
+                >
+                    Salvar alterações
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- MODAL -->
+
+<div class="modal" id="modal">
+
+    <div class="modal-content">
+
+        <button
+            class="close"
+            onclick="closeModal()"
+        >
+            ×
+        </button>
+
+        <h2 id="modalTitle">
+            Título
+        </h2>
+
+        <p
+            id="modalText"
+            style="margin-top:15px;color:var(--muted);line-height:1.6"
+        >
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- VLibras: tradução de conteúdos compatíveis para Língua Brasileira de Sinais -->
+<div vw class="enabled" aria-label="Tradutor de Libras">
+  <div vw-access-button class="active" aria-label="Abrir tradutor de Libras"></div>
+  <div vw-plugin-wrapper>
+    <div class="vw-plugin-top-wrapper"></div>
+  </div>
+</div>
+<script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+<script>
+  if (window.VLibras && window.VLibras.Widget) {
+    new window.VLibras.Widget('https://vlibras.gov.br');
+  }
+</script>
+
+<script src="app.js"></script>
+<script src="enhancements.js"></script>
+<script src="role-fixes.js"></script>
+
+</body>
+</html>
